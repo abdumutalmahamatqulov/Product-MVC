@@ -1,0 +1,127 @@
+﻿@model Product_MVC.Dto_s.LoginDto;
+
+<body>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+	body {
+		height: auto;
+		width: auto;
+		margin: 2px;
+		padding: 2px;
+		background: url( https://thumbs.dreamstime.com/b/fantasy-photo-editing-background-hill-angles-fantasy-galaxies-hill-angles-fantasy-galaxies-222603680.jpg );
+		font-family: sans-serif;
+		background-size: cover;
+	}
+
+	.login-box {
+		width: 300px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		right: 50%;
+		transform: translate(-50%,-50%);
+		color: white;
+	}
+		.login-box h1 {
+			float:left;
+			font-size: 50px;
+			border-bottom: 6px;
+			margin-bottom: 50px;
+			padding:10px;
+		}
+		.textbox {
+			width: 100%;
+			overflow: hidden;
+			font-size: 20px;
+			padding: 8px;
+			margin: 8px;
+			border-bottom: 2px;
+			transition: .5s ease-in-out;
+		}
+		textbox:hover {
+			border-bottom: 2px solid gray;
+		}
+		.textbox i {
+			color: white;
+			width:25px;
+			float: left;
+			text-align: center;
+		}
+		.textbox input {
+			cursor: pointer;
+			border:dashed;
+			outline: none;
+			background:none;
+			color: white;
+			font-size: 20px;
+			width: 80%;
+			float: left;
+			margin: 10px;
+		}
+	.btn {
+		width: 100%;
+		background:bottom;
+		border: 2px solid white;
+		color: white;
+		padding: 5px;
+		font-size: 20px;
+		cursor: pointer;
+		margin:12px;
+		outline: none;
+		transition: .5s ease-in-out;
+	}
+		.btn:hover {
+			box-shadow: 5px 5px gray;
+			border: #808080 solid 2px;
+			background-color: none;
+			content;
+		}
+	input ::placeholder{
+		color: white;
+	}
+	input:focus {
+		color:gray;
+	}
+	.footer {
+		background: white;
+	}
+
+	input:-webkit-autofill,
+	input:-webkit-autofill:hover,
+	input:-webkit-autofill:focus,
+	input:-webkit-autofill:active {
+		transition: background-color 5500s ease-in-out 0s;
+		-webkit-text-fill-color: white !important;
+	}
+</style>
+</body>
+	
+<body>
+	<link rel="stylesheet " href="pic_trulli.jpg">
+</body>
+<body translate="no">
+	<form asp-controller="Auth" asp-action="Login" method="post" enctype="multipart/form-data" class="col-md-6" style="margin: 5px auto;">
+		<div class="login-box">
+			<h1>
+				Login
+			</h1>
+			<div class="textbox">
+				<i class="fa fa-user" aria-hidden="true"></i>
+				<input asp-for="Email" type="text" id="from2-username" placeholder="Email">
+			</div>
+			<div class="textbox">
+				<i class="fa fa-user" aria-hidden="true"></i>
+				<input asp-for="Password" type="text"id="from2-username" placeholder="Password">
+			</div>
+			<button asp-controller="Auth" asp-action="Login"type="submit"class="btn btn-pill btn-outline-info"style="width: 100%">
+				<i class="fa fa-sign-in mr-1"></i> Login
+			</button>
+			<button asp-controller="Auth" asp-action="Registor" type="submit" class="btn btn-pill btn-outline-info" style="width: 100%">
+			<i class="fa fa-sign-in mr-1"></i>Registor
+		</button>
+		</div>
+	</form>
+	
+</body>
+

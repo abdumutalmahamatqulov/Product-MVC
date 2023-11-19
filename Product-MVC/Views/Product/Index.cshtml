@@ -1,0 +1,107 @@
+﻿ @model List<Product_MVC.Entities.Product> 
+@{
+	ViewData["Title"] = "Home Page";
+}
+<form asp-controller="Product " asp-action="AddProduct" method="get" enctype="multipart/form-data" class="col-md-6" style="margin: 5px auto;">
+	<div class="login-box">
+
+		<button asp-controller="Product" asp-action="AddProduct" type="submit" class="btn btn-pill btn-outline-info" style="width: 10%;">
+			<i class="fa fa-sign-in mr-1"></i> Add
+		</button>
+
+	</div>
+</form>
+<form asp-controller="Product " asp-action="UpdateProduct" method="get" enctype="multipart/form-data" class="col-md-6" style="margin: 5px auto;">
+	<div class="login-box">
+
+		<button asp-controller="Product" asp-action="UpdateProduct" type="submit" class="btn btn-pill btn-outline-info" style="width: 15%;">
+			<i class="fa fa-sign-in mr-1"></i> Update
+		</button>
+
+	</div>
+</form>
+<form asp-controller="Product " asp-action="DeleteProduct" method="get" enctype="multipart/form-data" class="col-md-6" style="margin: 5px auto;">
+	<div class="login-box">
+		<button asp-controller="Product" asp-action="DeleteProduct" type="submit" class="btn btn-pill btn-outline-info" style="width: 15%;">
+			<i class="fa fa-sign-in mr-1"></i> Delete
+		</button>
+	</div>
+</form>
+	<div class="login-box">
+		<button onclick="redirectionSwagger()" type="submit" class="btn btn-pill btn-outline-info" style="width: 10%;">
+			<i class="Colllor"></i> API
+		</button>
+	</div>
+<script>
+	function redirectionSwagger(){
+		window.location.href = "https://localhost:7265/swagger/index.html"
+	}
+</script>
+<style>
+	.user-table {
+		font-family: Arial, sans-serif;
+		border-collapse: collapse;
+		width: 100%
+	}
+
+i{
+	background-color:green;
+	color:#fff;
+}
+
+body {
+	height: auto;
+	width: auto;
+	margin: 2px;
+	padding: 2px;
+		background: url(https://i.pinimg.com/736x/00/d8/c9/00d8c9cd5d49bbaf007bb34b6bfa1be0.jpg);
+	font-family: sans-serif;
+	background-size: cover;
+}
+
+.user-table thead th {
+	padding: 15px;
+	background-color: orange;
+	text-align: left;
+	border: 2px solid black;
+}
+
+.user-table tbody td {
+	padding: 15px;
+	text-align: left;
+	border: 2px solid yellow;
+}
+
+.user-table tbody tr:nth-child(even) {
+	background-color: #8df542;
+}
+
+.user-table tbody tr:hover {
+	background-color: #8df542;
+}
+</style>
+<table class="user-table" style="width:100%">
+	<thread>
+		<tr>
+			<th>Id</th>
+			<th>ItemName</th>
+			<th>Price</th>
+			<th>Quantiy</th>
+			<th>VAR</th>
+		</tr>
+	</thread>
+	<tbody>
+		@foreach (var tem in Model)
+		{
+			<tr>
+				<td>@tem.Id</td>
+				<td>@tem.ItemName</td>
+				<td>@tem.Price</td>
+				<td>@tem.Quantiy</td>
+				<td>@tem.TotalPrice</td>
+
+			</tr>
+		}
+	</tbody>
+</table>
+  

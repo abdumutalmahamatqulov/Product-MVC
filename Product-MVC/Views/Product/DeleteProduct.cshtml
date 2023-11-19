@@ -1,0 +1,18 @@
+﻿@model Product_MVC.Entities.Product;
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+	<form asp-controller="Product " asp-action="DeleteProduct" method="post" enctype="multipart/form-data" class="col-md-6" style="margin: 5px auto;">
+		<div class="login-box">
+			<h1>Product</h1>
+			<div class="textbox>
+				<i class="fa fa-user" aria-hidden="true"></i>
+				<input asp-for="Id" type="number" id="form1-Admin" placeholder="Id">
+			</div>
+			<button asp-controller="Product" asp-action="DeleteProduct" type="submit" class="btn btn-pill btn-outline-info" style="width: 100%;">
+				<i class="fa fa-sign-in mr-1"></i> DeleteProduct
+			</button>
+		</div>
+	</form>
+</body>

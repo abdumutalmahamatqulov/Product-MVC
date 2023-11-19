@@ -1,0 +1,34 @@
+﻿@model Product_MVC.Entities.Product;
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body translate="no">
+	<form asp-controller="Product " asp-action="UpdateProduct" method="post" enctype="multipart/form-data" class="col-md-6" style="margin: 5px auto;">
+		<div>
+			<h1>Product</h1>
+			<div class="textbox>
+				<i class="fa fa-user" aria-hidden="true"></i>
+				<input asp-for="Id" type="number" id="form4-Admin" placeholder="Id">
+			</div>
+			<div class="textbox>
+				<i class="fa fa-user" aria-hidden="true"></i>
+				<input asp-for="ItemName" type="text" id="form1-Admin" placeholder="ItemName">
+			</div>
+			<div class="textbox>
+				<i class="fa fa-user" aria-hidden="true"></i>
+				<input asp-for="Quantiy" type="text" id="form2-Admin" placeholder="Quantiy">
+			</div>
+			<div class="textbox>
+				<i class="fa fa-user" aria-hidden="true"></i>
+				<input asp-for="Price" type="number" id="form3-Admin" placeholder="Price">
+			</div>
+			<div class="textbox>
+				<i class="fa fa-user" aria-hidden="true"></i>
+				<input asp-for="TotalPrice" type="number" id="form4-Admin" placeholder="TotalPrice">
+			</div>
+			<button asp-controller="Product" asp-action="UpdateProduct" type="submit" class="btn btn-pill btn-outline-info" style="width: 100%;">
+				<i class="fa fa-sign-in mr-1"></i> UpdateProduct
+			</button>
+		</div>
+	</form>
+</body>
