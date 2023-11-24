@@ -12,8 +12,10 @@ public class RegistorDto
     [Display(Name= "Email Address")]
     [Required(ErrorMessage = "Error address is required")]
     public string Email { get; set; }
-    [Required]
+    [Required(ErrorMessage = "Email maydoni to'ldirilishi shart")]
     [DataType(DataType.Password)]
+    //[CustomEmailValidation(ErrorMessage = "Faqat @gmail.com shunga ega manzillar qabul qiliniadi")]
     public string Password { get; set; }
     public ERole? Role { get; set; }
 }
+

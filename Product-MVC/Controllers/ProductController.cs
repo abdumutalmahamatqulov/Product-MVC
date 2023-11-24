@@ -1,75 +1,159 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NToastNotify;
 using Product_MVC.Data;
 using Product_MVC.Dto_s;
 using Product_MVC.Entities;
+using Product_MVC.Entities.Enum;
+using Product_MVC.Repositories;
 
 namespace Product_MVC.Controllers;
 
 public class ProductController : Controller
 {
     private readonly AppDbContext _appDbContext;
-
-    public ProductController(AppDbContext appDbContext) => _appDbContext = appDbContext;
-    public async Task<IActionResult> table()
+    private readonly UserManager<User> _userManager;
+    private readonly IProductRepository _productRepository;
+	private readonly IToastNotification _notification;
+    public ProductController(AppDbContext appDbContext, UserManager<User> userManager, IProductRepository productRepository, IToastNotification notification)
     {
-    
-        var indexproduct = await _appDbContext.Products.ToListAsync();
-        return View("table",indexproduct);
+        _appDbContext = appDbContext;
+        _userManager = userManager;
+        _productRepository = productRepository;
+        _notification = notification;
     }
+
+
+
 	public async Task<IActionResult> Index()
 	{
 		var indexproduct = await _appDbContext.Products.ToListAsync();
-		return View("Index", indexproduct);
+		foreach (var product in indexproduct)
+		{
+			product.TotalPrice = (product.Price * product.Quantiy) * (1 + 0.1);
+			product.TotalPrice = Math.Floor(product.TotalPrice);
+			await _appDbContext.SaveChangesAsync();
+		}
+		if (User.IsInRole("ADMIN"))
+		{
+		_notification.AddInfoToastMessage("ADMIN");
+		}
+		else
+		{
+			_notification.AddInfoToastMessage("USER");
+		}
+		return View(indexproduct);
 	}
 
 
-	public async Task<IActionResult> AddProduct() => View("AddProduct");
+	public async Task<IActionResult> AddProduct() => View();
     [HttpPost]
-    public async Task<IActionResult>AddProduct(Product product)
+    public async Task<IActionResult>AddProduct([Bind("Id,ItemName,Quantiy,Price")]Product product)
     {
-        if (!ModelState.IsValid)
+        if(product.Quantiy<0 && product.Price < 0)
+		{
+			_notification.AddErrorToastMessage("Manfiy kiritish mumkin emas");
+			return View(product);
+		}
+		if (!ModelState.IsValid)
+		{
+
+			_notification.AddErrorToastMessage("Hatolik bor");
+			return View(product);
+		}
+		double totalPrice = (product.Price * product.Quantiy) * (1 + 0.1);
+		product.TotalPrice = totalPrice;
+
+		var user = await _userManager.GetUserAsync(HttpContext.User);
+        await _productRepository.CreateProductAsync(product);
+		await _productRepository.CreateAudit(product, null, "AddProduct", user);
+	
+		return View("Index", await _appDbContext.Products.ToListAsync());
+    }
+
+	public async Task<IActionResult> UpdateProduct(int id)
+	{
+		try
+		{
+			if (id == null) return NotFound();
+
+			var product = await _productRepository.GetProductByIdAsync(id);
+			if (product == null) return NotFound();
+
+			return View(product);
+		}
+		catch (Exception ex)
+		{
+			return RedirectToAction("Index", "UpdateProduct");
+		}
+	}
+	[HttpPost]
+    public async Task<IActionResult> UpdateProduct(int id,[Bind("Id,ItemName,Quantiy,Price")] Product product)
+    {
+		if (id != product.Id) return NotFound();
+		if (!ModelState.IsValid) return View(product);
+		try
+		{
+			var user = await _userManager.GetUserAsync(HttpContext.User);
+			var oldProduct = await _productRepository.GetOldValueAsync(product.Id);
+			var newProduct = await _productRepository.UpdateProductAsync(product);
+			await _productRepository.CreateAudit(newProduct, oldProduct, "UpdateProduct", user);
+		}
+		catch (DbUpdateConcurrencyException)
+		{
+			if (_productRepository.GetProductByIdAsync(product.Id) == null)
+				return NotFound();
+			else
+				throw;
+		}
+        var allresult = await _appDbContext.Products.ToListAsync();
+        foreach(var produc in allresult)
         {
-            return View("Index");
-        }
-        var products = product.Adapt<Product>();
-        if (product.Price<0 ) return View("Manfiy bo'lishi mumkin emas");
-        _appDbContext.Products.Add(products);
-        await _appDbContext.SaveChangesAsync();
-        var products2 = await _appDbContext.Products.ToListAsync();
-        return View("Index", products2);
-    }
+			produc.TotalPrice = (produc.Price * produc.Quantiy) * (1 + 0.1);
+			produc.TotalPrice = Math.Floor(produc.TotalPrice);
+			await _appDbContext.SaveChangesAsync();
+		}
+        return View("Index", allresult);
+	}
+	[Authorize(Roles = "ADMIN")]
+	public async Task<IActionResult> Details(int id)
+	{
+		try
+		{
+			if (id == null) return NotFound();
 
-	public async Task<IActionResult> UpdateProduct() => View("UpdateProduct");
-    [HttpPost]
-    public async Task<IActionResult> UpdateProduct(int id, Product product)
-    {
-        if (!ModelState.IsValid) return View("Index");
-        var productfind = await _appDbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
-        productfind.ItemName = product.ItemName;
-        productfind.Price = product.Price;
-        productfind.Quantiy = product.Quantiy;
-        productfind.TotalPrice = product.TotalPrice;
-        _appDbContext.Products.Update(productfind);
-        await _appDbContext.SaveChangesAsync();
+			var product = await _productRepository.GetProductByIdAsync(id);
+			if (product == null) return NotFound();
 
-        var returnproduct = await _appDbContext.Products.ToListAsync();
-        return View("Index", returnproduct);
-    }
+			return View(product);
+		}
+		catch (Exception ex)
+		{
+			return RedirectToAction("Index", "NotFoundPage");
+		}
 
+	}
 	public IActionResult DeleteProduct() => View();
 
 	[HttpPost]
     public async Task <IActionResult> DeleteProduct(int id)
     {
-        if (!ModelState.IsValid) return View("Index");
+
+        if (!ModelState.IsValid)
+			
+			return View("Index");
         var findProduct = await _appDbContext.Products.FirstOrDefaultAsync(d=>d.Id == id);
-        _appDbContext.Products.Remove(findProduct);
-        await _appDbContext.SaveChangesAsync();
+        if(findProduct != null)
+        {
+            _appDbContext.Products.Remove(findProduct);
+            await _appDbContext.SaveChangesAsync();
+        }
 
         var find2 = await _appDbContext.Products.ToListAsync();
         return View("Index", find2);
     }
 }
+

@@ -12,8 +12,8 @@ using Product_MVC.Data;
 namespace Product_MVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231119020808_Audit")]
-    partial class Audit
+    [Migration("20231123060931_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,13 +53,13 @@ namespace Product_MVC.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "10aa510f-73ed-4a70-9b23-3982a8901bac",
+                            Id = "26b8d32d-33a5-42d6-a9ca-7d4d19f46f98",
                             Name = "ADMIN",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "7bec6db3-4a50-49ad-9c7a-1abcc9340500",
+                            Id = "943353d8-9f7a-4e03-b2e1-1ee98cc1d89b",
                             Name = "USER",
                             NormalizedName = "USER"
                         });
@@ -173,7 +173,13 @@ namespace Product_MVC.Migrations
 
             modelBuilder.Entity("Product_MVC.Entities.AuditLog", b =>
                 {
-                    b.Property<string>("NewValue")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Action")
                         .HasColumnType("text");
 
                     b.Property<string>("ControllerName")
@@ -183,8 +189,9 @@ namespace Product_MVC.Migrations
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
+                    b.Property<string>("NewValue")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("OldValue")
                         .IsRequired()
@@ -194,7 +201,7 @@ namespace Product_MVC.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("NewValue");
+                    b.HasKey("Id");
 
                     b.ToTable("AuditLogs");
                 });
@@ -214,9 +221,8 @@ namespace Product_MVC.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("double precision");
 
-                    b.Property<string>("Quantiy")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<double>("Quantiy")
+                        .HasColumnType("double precision");
 
                     b.Property<double>("TotalPrice")
                         .HasColumnType("double precision");

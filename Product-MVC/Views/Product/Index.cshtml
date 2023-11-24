@@ -2,41 +2,7 @@
 @{
 	ViewData["Title"] = "Home Page";
 }
-<form asp-controller="Product " asp-action="AddProduct" method="get" enctype="multipart/form-data" class="col-md-6" style="margin: 5px auto;">
-	<div class="login-box">
 
-		<button asp-controller="Product" asp-action="AddProduct" type="submit" class="btn btn-pill btn-outline-info" style="width: 10%;">
-			<i class="fa fa-sign-in mr-1"></i> Add
-		</button>
-
-	</div>
-</form>
-<form asp-controller="Product " asp-action="UpdateProduct" method="get" enctype="multipart/form-data" class="col-md-6" style="margin: 5px auto;">
-	<div class="login-box">
-
-		<button asp-controller="Product" asp-action="UpdateProduct" type="submit" class="btn btn-pill btn-outline-info" style="width: 15%;">
-			<i class="fa fa-sign-in mr-1"></i> Update
-		</button>
-
-	</div>
-</form>
-<form asp-controller="Product " asp-action="DeleteProduct" method="get" enctype="multipart/form-data" class="col-md-6" style="margin: 5px auto;">
-	<div class="login-box">
-		<button asp-controller="Product" asp-action="DeleteProduct" type="submit" class="btn btn-pill btn-outline-info" style="width: 15%;">
-			<i class="fa fa-sign-in mr-1"></i> Delete
-		</button>
-	</div>
-</form>
-	<div class="login-box">
-		<button onclick="redirectionSwagger()" type="submit" class="btn btn-pill btn-outline-info" style="width: 10%;">
-			<i class="Colllor"></i> API
-		</button>
-	</div>
-<script>
-	function redirectionSwagger(){
-		window.location.href = "https://localhost:7265/swagger/index.html"
-	}
-</script>
 <style>
 	.user-table {
 		font-family: Arial, sans-serif;
@@ -54,7 +20,6 @@ body {
 	width: auto;
 	margin: 2px;
 	padding: 2px;
-		background: url(https://i.pinimg.com/736x/00/d8/c9/00d8c9cd5d49bbaf007bb34b6bfa1be0.jpg);
 	font-family: sans-serif;
 	background-size: cover;
 }
@@ -79,7 +44,32 @@ body {
 .user-table tbody tr:hover {
 	background-color: #8df542;
 }
+
+.filter-div {
+	display: flex;
+	justify-content: space-between;
+	padding: 0px;
+	align-items: center;
+	gap: 2px;
+	> button{
+		width:100%;
+	}
+}
 </style>
+<h1>Products</h1>
+@if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("ADMIN"))
+{
+		<a asp-controller="Product" asp-action="AddProduct" class="btn btn-pill btn-outline-info" style="width: 10%;">
+			<i class="fa fa-sign-in mr-1"></i> Add
+		</a>	
+		<a asp-controller="AuditView" asp-action="Index" class="btn btn-info">
+			 Audit
+		</a>
+
+	<button class="btn btn-info" onclick="location.pathname = 'swagger'">API Swagger</button>
+}
+
+
 <table class="user-table" style="width:100%">
 	<thread>
 		<tr>
@@ -87,7 +77,11 @@ body {
 			<th>ItemName</th>
 			<th>Price</th>
 			<th>Quantiy</th>
-			<th>VAR</th>
+			<th>Total Price + VAR(10%)</th>
+			@if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("ADMIN"))
+			{
+			<th>Action</th>
+			}
 		</tr>
 	</thread>
 	<tbody>
@@ -99,7 +93,33 @@ body {
 				<td>@tem.Price</td>
 				<td>@tem.Quantiy</td>
 				<td>@tem.TotalPrice</td>
+				@if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("ADMIN"))
+				{
+					<td>
+						<div class="  w-full filter-div ">
+							<form asp-controller="Product " asp-action="DeleteProduct" method="post" enctype="multipart/form-data" style="margin: 5px auto;">
+							<div >
+								<input name="Id" asp-for="@tem.Id" type="hidden" id="form1-Admin" placeholder="Id">
+								<button asp-controller="Product" asp-action="DeleteProduct" type="submit" class="btn btn-pill btn-danger" style="width: 100%;">
+									 Delete
+								</button>
+							</div>
+							</form>
+							<form asp-controller="Product " asp-action="UpdateProduct" method="get" enctype="multipart/form-data"  style="margin: 5px auto;">
+								<div >
+									<input name="Id" asp-for="@tem.Id" type="hidden" id="form4-Admin" placeholder="Id"> 
+									<input name="ItemName" asp-for="@tem.ItemName" type="hidden" id="form1-Admin" placeholder="ItemName">
+									<input name="Quantiy" asp-for="@tem.Quantiy" type="hidden" id="form2-Admin" placeholder="Quantiy">
+									<input name="Price" asp-for="@tem.Price" type="hidden" id="form3-Admin" placeholder="Price">
+									<button asp-controller="Product" asp-action="UpdateProduct" type="submit" class="btn btn-pill btn-primary" style="width: 100%;">
+										 Update
+									</button>
 
+								</div>
+							</form>
+						</div>
+					</td>
+				}
 			</tr>
 		}
 	</tbody>

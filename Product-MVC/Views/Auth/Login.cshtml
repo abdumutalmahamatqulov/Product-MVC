@@ -108,18 +108,18 @@
 			</h1>
 			<div class="textbox">
 				<i class="fa fa-user" aria-hidden="true"></i>
-				<input asp-for="Email" type="text" id="from2-username" placeholder="Email">
+				<input asp-for="Email" type="email" id="from1-useremail" placeholder="Email">
 			</div>
 			<div class="textbox">
 				<i class="fa fa-user" aria-hidden="true"></i>
-				<input asp-for="Password" type="text"id="from2-username" placeholder="Password">
+				<input asp-for="Password" type="password"id="from2-password" placeholder="Password">
 			</div>
 			<button asp-controller="Auth" asp-action="Login"type="submit"class="btn btn-pill btn-outline-info"style="width: 100%">
 				<i class="fa fa-sign-in mr-1"></i> Login
 			</button>
-			<button asp-controller="Auth" asp-action="Registor" type="submit" class="btn btn-pill btn-outline-info" style="width: 100%">
-			<i class="fa fa-sign-in mr-1"></i>Registor
-		</button>
+			<a asp-controller="Auth" asp-action="Registor" class="btn btn-pill btn-outline-info" style="width: 100%">
+				<i class="fa fa-sign-in mr-1"></i>Registor
+			</a>
 		</div>
 	</form>
 	

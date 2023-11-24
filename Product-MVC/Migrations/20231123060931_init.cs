@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Product_MVC.Migrations
 {
     /// <inheritdoc />
-    public partial class Audit : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -57,16 +57,18 @@ namespace Product_MVC.Migrations
                 name: "AuditLogs",
                 columns: table => new
                 {
-                    NewValue = table.Column<string>(type: "text", nullable: false),
-                    Id = table.Column<int>(type: "integer", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserName = table.Column<string>(type: "text", nullable: false),
+                    Action = table.Column<string>(type: "text", nullable: true),
                     ControllerName = table.Column<string>(type: "text", nullable: false),
                     DateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    OldValue = table.Column<string>(type: "text", nullable: false)
+                    OldValue = table.Column<string>(type: "text", nullable: false),
+                    NewValue = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AuditLogs", x => x.NewValue);
+                    table.PrimaryKey("PK_AuditLogs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -76,7 +78,7 @@ namespace Product_MVC.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ItemName = table.Column<string>(type: "text", nullable: false),
-                    Quantiy = table.Column<string>(type: "text", nullable: false),
+                    Quantiy = table.Column<double>(type: "double precision", nullable: false),
                     Price = table.Column<double>(type: "double precision", nullable: false),
                     TotalPrice = table.Column<double>(type: "double precision", nullable: false)
                 },
@@ -196,8 +198,8 @@ namespace Product_MVC.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "10aa510f-73ed-4a70-9b23-3982a8901bac", null, "ADMIN", "ADMIN" },
-                    { "7bec6db3-4a50-49ad-9c7a-1abcc9340500", null, "USER", "USER" }
+                    { "26b8d32d-33a5-42d6-a9ca-7d4d19f46f98", null, "ADMIN", "ADMIN" },
+                    { "943353d8-9f7a-4e03-b2e1-1ee98cc1d89b", null, "USER", "USER" }
                 });
 
             migrationBuilder.CreateIndex(

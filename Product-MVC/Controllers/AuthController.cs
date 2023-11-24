@@ -10,6 +10,10 @@ using System.Data;
 using Product_MVC.Entities.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Product_MVC.Repositories;
+using NToastNotify;
+using Product_MVC.Funtion;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using FluentValidation.Validators;
 
 namespace Product_MVC.Controllers;
 
@@ -17,15 +21,20 @@ public class AuthController : Controller
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
-	public AuthController( RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+	private readonly SignInManager<User> _signInManager;
+	private readonly IToastNotification _notification;
+	public AuthController(RoleManager<IdentityRole> roleManager, UserManager<User> userManager, IToastNotification notification, SignInManager<User> signInManager)
 	{
 		_roleManager = roleManager;
 		_userManager = userManager;
+		_notification = notification;
+		_signInManager = signInManager;
 	}
 
 	public IActionResult Login()
     {
-		var response = new LoginDto();
+
+        var response = new LoginDto();
 		return View(response);
 	}
 
@@ -35,6 +44,7 @@ public class AuthController : Controller
 	{
 		if (!ModelState.IsValid)
 		{
+			_notification.AddWarningToastMessage("Please Enter Email Or Password");
 			return View(loginDto);
 		}
 		var login = await _userManager.FindByEmailAsync(loginDto.Email);
@@ -43,18 +53,31 @@ public class AuthController : Controller
 			var isPasswordValid = await _userManager.CheckPasswordAsync(login, loginDto.Password);
 
 
-			if (isPasswordValid && !await _userManager.IsInRoleAsync(login, "Admin"))
+			if (isPasswordValid)
 			{
-				return RedirectToAction("table", "Product");
+				var result = await _signInManager.PasswordSignInAsync(login, loginDto.Password,false,false);
+				if (result.Succeeded)
+				{
+					var rol = await _userManager.GetRolesAsync(login);
+					foreach(var rolle in rol)
+					{
+						if (rolle is not null)
+						{
+							return RedirectToAction("Index", "Product");
+						}
+						
+					}
+				}
+
 			}
-			else
-			{
-				return RedirectToAction("Index", "Product");
-			}
+			TempData["Error"] = "Parol noto'g'ri";
+			return View(loginDto);
 		}
+		_notification.AddErrorToastMessage("Error Login");
+		TempData["Error"] = "Foydalanuvchi topilmadi";
 		return RedirectToAction("Login", "Auth");
 	}
-	public IActionResult Registor()
+	public async Task<IActionResult> Registor()
 	{
 		var response = new RegistorDto();
 		return View(response);
@@ -68,42 +91,49 @@ public class AuthController : Controller
 		if (!ModelState.IsValid)
 			return View(registerDto);
 
-		var existingUser = await _userManager.FindByEmailAsync(registerDto.Email);
-		if (existingUser != null)
+		if (!CheckEmail.IsValidEmail(registerDto.Email))
 		{
-			ModelState.AddModelError("Email", "Elektron pochta allaqachon ishlatilgan.");
-			return View(registerDto);
+			_notification.AddErrorToastMessage("Emailda yoki Passwordda hatolik bor");
+			return View("Registor");
 		}
 
-		var newUser = new User()
-		{
-			Email = registerDto.Email,
-			UserName = registerDto.Email,
-		};
-
-		var result = await _userManager.CreateAsync(newUser, registerDto.Password);
-	
-		if (result.Succeeded)
-		{
-			if (registerDto.Role == 0)
+			var existingUser = await _userManager.FindByEmailAsync(registerDto.Email);
+			if (existingUser != null)
 			{
-				await _userManager.AddToRoleAsync(newUser, ERole.Admin.ToString());
-				return RedirectToAction("Login", "Auth");
+				ModelState.AddModelError("Email", "Elektron pochta allaqachon ishlatilgan.");
+				return View(registerDto);
+			}
+
+			var newUser = new User()
+			{
+				Email = registerDto.Email,
+				UserName = registerDto.UserName,
+			};
+
+			var result = await _userManager.CreateAsync(newUser, registerDto.Password);
+
+			if (result.Succeeded)
+			{
+				if (registerDto.Role == 0)
+				{
+					await _userManager.AddToRoleAsync(newUser, ERole.Admin.ToString());
+					return RedirectToAction("Login", "Auth");
+				}
+				else
+				{
+					await _userManager.AddToRoleAsync(newUser, ERole.User.ToString());
+					return RedirectToAction("Login", "Auth");
+				}
 			}
 			else
 			{
-				await _userManager.AddToRoleAsync(newUser, ERole.User.ToString());
-				return RedirectToAction("table", "Product");
-			}
-		}
-		else
-		{
-			foreach (var error in result.Errors)
-			{
-				ModelState.AddModelError(string.Empty, error.Description);
+				foreach (var error in result.Errors)
+				{
+					ModelState.AddModelError(string.Empty, error.Description);
+				}
+
+				return View(registerDto);
 			}
 
-			return View(registerDto);
-		}
 	}
 }

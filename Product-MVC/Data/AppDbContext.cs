@@ -10,7 +10,7 @@ namespace Product_MVC.Data;
 
 public class AppDbContext : IdentityDbContext<User>
 {
-	private IServiceProvider services;
+	//private IServiceProvider services;
 	public AppDbContext(DbContextOptions<AppDbContext> options, IServiceProvider services) : base(options)
 	{
 		this.Service = services;
@@ -20,8 +20,7 @@ public class AppDbContext : IdentityDbContext<User>
 	public DbSet<AuditLog> AuditLogs { get; set; }
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
-		builder.Entity<AuditLog>()
-			.HasKey(a=>a.NewValue);
+		builder.Entity<Product>();
 		base.OnModelCreating(builder);
 		builder.ApplyConfiguration<IdentityRole>(new RoleConfiguration(Service));
 	}

@@ -6,8 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using NToastNotify;
 using Product_MVC.Data;
 using Product_MVC.Entities;
+using Product_MVC.Funtion;
 using Product_MVC.Repositories;
 using Product_MVC.Services;
 
@@ -23,11 +25,13 @@ builder.Services.AddSwaggerGen(c =>
 {
 	c.SwaggerDoc("v1", new OpenApiInfo
 	{
-		Title = "TeamProjectMVC API",
+		Title = "Producr_MVC API",
 		Version = "v1"
 	});
 });
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<VatCalculator>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IAuditRepository, AuditRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -46,49 +50,33 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 	.AddRoles<IdentityRole>()
 	.AddEntityFrameworkStores<AppDbContext>();
 
-// IdentityRole konfiguratsiyasini qo'shish
 builder.Services.AddScoped<IEntityTypeConfiguration<IdentityRole>, RoleConfiguration>();
-
+builder.Services.AddRazorPages().AddNToastNotifyNoty(new NotyOptions
+{
+	ProgressBar = true,
+	Timeout = 1000
+});
 
 var app = builder.Build();
-
-// Hammasi amalga oshirildi, endi konfiguratsiyalar qismini ko'rishimiz mumkin
-
+using (var serviceScope = app.Services.CreateScope())
+{
+	await Seed.SeedUsersAndRolesAsync(serviceScope.ServiceProvider);
+}
+if (!app.Environment.IsDevelopment())
+{
+	app.UseExceptionHandler("Home/Error");
+	app.UseHsts();
+}
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-//app.Use(async (context, next) =>
-//{
-//	if (context.Request.Path.StartsWithSegments("/swagger"))
-//	{
-//		await Console.Out.WriteLineAsync(context.User.Identity!.IsAuthenticated.ToString());
-//		if (context.User.Identity.IsAuthenticated)
-//		{
-//			if (!context.User.IsInRole("ADMIN"))
-//			{
-//				context.Response.StatusCode = 403;
-//				return;
-//			}
-//		}
-//		else
-//		{
-//			context.Response.Redirect("/Auth/Login");
-//			return;
-//		}
-//	}
-//	await next.Invoke();
-//});
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseNToastNotify();
 
 app.UseAuthorization();
 app.UseAuthentication();
-app.MapControllerRoute(
-	name: "table",
-	pattern: "Product/table",
-	defaults: new { controller = "Product", action = "Table" });
-
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Auth}/{action=Login}/{id?}");

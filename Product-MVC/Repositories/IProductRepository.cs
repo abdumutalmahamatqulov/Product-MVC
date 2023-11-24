@@ -11,5 +11,5 @@ public interface IProductRepository
 	public Task<Product> UpdateProductAsync(Product entity);
 	public Task<Product> DeleteProductAsync(int id);
 	public Task<Product> GetOldValueAsync(int id);
-	public Task<Product> CreateAudit(Product newProduct,Product oldProduct, string ActionType, User user);
+	public Task<Product> CreateAudit(Product entity, Product oldValue, string actionType, User user);
 }

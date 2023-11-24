@@ -17,10 +17,13 @@ public class AuditRepository : IAuditRepository
 		var auditLogs = await _context.AuditLogs.ToListAsync();
 
 
+        var filteredLogs = AuditFor.FilterAuditLogsByDate(auditLogs, fromDate, toDate, Name);
+
 		var viewModel = new AuditLogViewModel
 		{
 			FromDate = fromDate ?? DateTime.Today.AddDays(-100),
 			ToDate = toDate ?? DateTime.Today,
+			FilteredLogs = filteredLogs
 		};
 
 		return viewModel;

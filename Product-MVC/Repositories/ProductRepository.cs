@@ -10,11 +10,12 @@ public class ProductRepository : IProductRepository
 
 	public ProductRepository(AppDbContext appDbContext) => _appDbContext = appDbContext;
 
-	public async Task<Product> CreateAudit(Product newProduct, Product oldProduct, string ActionType, User user)
+	public async Task<Product> CreateAudit(Product newProduct, Product oldProduct, string actionType, User user)
 	{
 		var auditTrailRecord = new AuditLog
 		{
 			UserName = user.UserName,
+			Action=actionType,
 			ControllerName = "Product",
 			DateTime = DateTime.UtcNow,
 			OldValue = JsonConvert.SerializeObject(oldProduct, Formatting.Indented),
@@ -35,38 +36,41 @@ public class ProductRepository : IProductRepository
 
 	public async Task<Product> CreateProductAsync(Product product)
 	{
-		await _appDbContext.Products.AddAsync(product);
+		_appDbContext.Products.Add(product);
 		await _appDbContext.SaveChangesAsync();
 		return product;
 	}
 
 	public async Task<Product> DeleteProductAsync(int id)
 	{
-		var findProduct = await _appDbContext.Products.FirstOrDefaultAsync(x=>x.Id==id);
-		if (findProduct == null) throw new Exception("Product not Found");
-		_appDbContext.Products.Remove(findProduct);
+	var getid =  await _appDbContext.Products.FirstOrDefaultAsync(x => x.Id == id);
+		_appDbContext.Products.Remove(getid);
 		await _appDbContext.SaveChangesAsync();
-		return findProduct;
+		return getid;
 	}
 
-	public async Task<IEnumerable<Product>> GetAllProducts() => await _appDbContext.Products.OrderBy(p => p.Id).ToListAsync();
+	public async Task<IEnumerable<Product>> GetAllProducts()
+	{
+		return await _appDbContext.Products.ToListAsync();
+	}
 
 	public async Task<Product> GetOldValueAsync(int id) => await _appDbContext.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
 
+
+
 	public async Task<Product> GetProductByIdAsync(int id)
 	{
-		var findproduct = await _appDbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
-		return findproduct ?? throw new Exception("Product not Found");
+		return await _appDbContext.Products.FirstOrDefaultAsync(x => x.Id == id);
 	}
 
-	public async Task<Product> UpdateProductAsync(Product entity)
+	public async Task<Product> UpdateProductAsync(Product product)
 	{
-		var findproduct = await _appDbContext.Products.FirstOrDefaultAsync(i=>i.Id==entity.Id);
-		if (findproduct == null) throw new Exception("Product not Found");
-		findproduct.Price = entity.Price;
-		findproduct.Quantiy = entity.Quantiy;
-		findproduct.ItemName = entity.ItemName;
-		findproduct.TotalPrice = entity.TotalPrice;
+		var findproduct = await _appDbContext.Products.FirstOrDefaultAsync(i => i.Id == product.Id);
+		findproduct.Price = product.Price;
+		findproduct.Quantiy = product.Quantiy;
+		findproduct.ItemName = product.ItemName;
+		findproduct.TotalPrice = product.TotalPrice;
+		_appDbContext.Products.Update(findproduct);
 		await _appDbContext.SaveChangesAsync();
 		return findproduct;
 	}

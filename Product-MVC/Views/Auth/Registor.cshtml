@@ -116,15 +116,15 @@
 			<h1>Registor</h1>
 			<div class="textbox">
 				<i class="fa fa-user" aria-hidden="true"></i>
-				<input asp-for="UserName" type="text" id="form1-username" placeholder="Name" required>
+				<input asp-for="UserName" id="form1-name" placeholder="Name" required>
 			</div>
 			<div class="textbox">
 				<i class="fa fa-user" aria-hidden="true"></i>
-				<input asp-for="Email" type="text" id="form2-username" placeholder="Email" required>
+				<input asp-for="Email" type="email" id="form2-email" placeholder="Email" required>
 			</div>
 			<div class="textbox">
 				<i class="fa fa-user" aria-hidden="true"></i>
-				<input asp-for="Password" type="text" id="form3-password" placeholder="Password" required>
+				<input asp-for="Password" type="password" id="form3-password" placeholder="Password" required>
 			</div>
 			<div class="textbox">
 				<i class="fa fa-user" aria-hidden="true"></i>
@@ -136,9 +136,9 @@
 			<button asp-controller="Auth" asp-action="RegistorConiform" type="submit" class="btn btn-pill btn-outline-info" style="width: 100%;">
 				<i class="fa fa-sign-in mr-1"></i> Registor
 			</button>
-			<button asp-controller="Auth" asp-action="Login" type="submit" class="btn btn-pill btn-outline-info" style="width: 100%;">
+			<a asp-controller="Auth" asp-action="Login" type="submit" class="btn btn-pill btn-outline-info" style="width: 100%;">
 				<i class="fa fa-sign-in mr-1"></i> Login
-			</button>
+			</a>
 		</div>
 	</form>
 </body>
