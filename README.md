@@ -1,57 +1,83 @@
-Project Name
-Description
+# Project Name
+
+## Description
+
 Briefly describe your project, its purpose, and key features.
 
-Prerequisites
-.NET SDK 7.0
-PostgreSQL
-Getting Started
-Clone the repository:
+## Prerequisites
 
-git clone https://github.com/your-username/your-project.git
-Navigate to the project folder:
 
-cd your-project
-Write Terminal this key words :
+- [.NET SDK 7.0](https://dotnet.microsoft.com/download)
+- [PostgreSQL](https://www.postgresql.org/download/)
 
-dotnet build
-dotnet restore
-Database Setup:
 
-Create a PostgreSQL database for the project.
+## Getting Started
 
-Update the appsettings.json file with your database connection string:
+1. **Clone the repository:**
 
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=YourDatabase;Username=YourUsername;Password=YourPassword"
-  },
-  // other settings...
-}
-Run Migrations:
+    ```bash
+    git clone https://github.com/your-username/your-project.git
+    ```
 
-add-migration "some words"
+2. **Navigate to the project folder:**
 
-update-database
-Run the Application:
+    ```bash
+    cd your-project
+    ```
+3. **Write Terminal this key words :**
+    ```bash
+    dotnet build
+    dotnet restore
+    ```  
+4. **Database Setup:**
 
-dotnet run
+    - Create a PostgreSQL database for the project.
+
+    - Update the `appsettings.json` file with your database connection string:
+
+        ```json
+        {
+          "ConnectionStrings": {
+            "DefaultConnection": "Host=localhost;Port=5432;Database=YourDatabase;Username=YourUsername;Password=YourPassword"
+          },
+          // other settings...
+        }
+        ```
+
+5. **Run Migrations:**
+
+    ```Package manager console
+    add-migration "some words"
+
+    update-database
+    ```
+
+6. **Run the Application:**
+
+    ```bash
+    dotnet run
+    ```
+    
 7.**Default Admin and User: **
 
-Admin 
-    name : Jenny@gmail.com; 
-    password: A0601221a_;
-User 
-    name : Vin@gmail.com;
-    password: B0601221b_;
+    Admin 
+        name : Jenny@gmail.com; 
+        password: A0601221a_;
+    User 
+        name : Vin@gmail.com;
+        password: B0601221b_;
 
+    
+    The application will be accessible at `http://localhost:5000` (or `https://localhost:5001` for HTTPS).
 
-The application will be accessible at `http://localhost:5000` (or `https://localhost:5001` for HTTPS).
-Contributing
-If you would like to contribute to the project, please follow the contribution guidelines.
+## Contributing
 
-License
-This project is licensed under the MIT License.
+If you would like to contribute to the project, please follow the [contribution guidelines](CONTRIBUTING.md).
 
-Acknowledgments
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## Acknowledgments
+
 Mention any libraries, tools, or people you want to give credit to.
