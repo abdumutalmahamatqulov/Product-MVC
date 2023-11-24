@@ -37,9 +37,9 @@ Briefly describe your project, its purpose, and key features.
 
         ```json
         {
-          "ConnectionStrings": {
-            "DefaultConnection": "Host=localhost;Port=5432;Database=YourDatabase;Username=YourUsername;Password=YourPassword"
-          },
+    "ConnectionStrings": {
+        "Connection": "User ID = postgres; Password = 123456; Host = localhost; Port = 5432; Database = Product_MVC;"
+    },
           // other settings...
         }
         ```
@@ -68,7 +68,7 @@ Briefly describe your project, its purpose, and key features.
         password: B0601221b_;
 
     
-    The application will be accessible at `http://localhost:5000` (or `https://localhost:5001` for HTTPS).
+    The application will be accessible at `http://localhost:7265` (or `https://localhost:7265` for HTTPS).
 
 ## Contributing
 
